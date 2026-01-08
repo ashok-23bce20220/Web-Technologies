@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        input {
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 12px;
+        }
+
+        .board {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .column {
+            width: 30%;
+            min-height: 300px;
+            border: 2px solid #b31313;
+            padding: 10px;
+        }
+
+        .column h3 {
+            text-align: center;
+        }
+
+        .task {
+            background-color: #a6adbb;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Task Manager</h2>
+
+<input type="text" id="taskInput" placeholder="Enter task name">
+<button onclick="addTask()">Add Task</button>
+
+<div class="board">
+    <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>To Do</h3>
+    </div>
+
+    <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>In Progress</h3>
+    </div>
+
+    <div class="column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>Completed</h3>
+    </div>
+</div>
+
+<script>
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.id);
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        var data = event.dataTransfer.getData("text");
+        var task = document.getElementById(data);
+        event.target.appendChild(task);
+
+        if (event.target.querySelector("h3").innerText === "Completed") {
+            task.style.backgroundColor = "lightgreen";
+            alert("Task Completed Successfully");
+        }
+    }
+
+    function addTask() {
+        var taskName = document.getElementById("taskInput").value;
+        if (taskName === "") return;
+
+        var task = document.createElement("div");
+        task.className = "task";
+        task.id = "task" + new Date().getTime();
+        task.draggable = true;
+        task.ondragstart = drag;
+
+        var date = new Date().toLocaleDateString();
+        task.innerHTML = taskName + "<br><small>" + date + "</small>";
+
+        document.querySelector(".column").appendChild(task);
+        document.getElementById("taskInput").value = "";
+    }
+</script>
+
+</body>
+</html>

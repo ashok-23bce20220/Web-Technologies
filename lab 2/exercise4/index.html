@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>User Registration</h2>
+
+<input type="text" id="name" placeholder="Name"><br>
+<input type="email" id="email" placeholder="Email"><br>
+<input type="text" id="mobile" placeholder="Mobile Number"><br>
+<input type="password" id="password" placeholder="Password"><br>
+
+<button onclick="registerUser()">Register</button>
+<button onclick="clearAll()">Clear All Users</button>
+
+<h2>Registered Users</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+</table>
+
+<script>
+    function registerUser() {
+        var name = document.getElementById("name").value;
+        var email = document.getElementById("email").value;
+        var mobile = document.getElementById("mobile").value;
+        var password = document.getElementById("password").value;
+
+        if (name === "" || email === "" || mobile === "" || password === "") {
+            alert("All fields are mandatory");
+            return;
+        }
+
+        if (mobile.length !== 10) {
+            alert("Mobile number must be 10 digits");
+            return;
+        }
+
+        if (password.length < 6) {
+            alert("Password must be at least 6 characters");
+            return;
+        }
+
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].email === email) {
+                alert("Email already registered");
+                return;
+            }
+        }
+
+        users.push({ name, email, mobile });
+        localStorage.setItem("users", JSON.stringify(users));
+
+        displayUsers();
+        clearForm();
+    }
+
+    function displayUsers() {
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+        var table = document.getElementById("userTable");
+        table.innerHTML = "";
+
+        users.forEach(function (user, index) {
+            var row = table.insertRow();
+            row.insertCell(0).innerText = user.name;
+            row.insertCell(1).innerText = user.email;
+            row.insertCell(2).innerText = user.mobile;
+
+            var actionCell = row.insertCell(3);
+            var btn = document.createElement("button");
+            btn.innerText = "Delete";
+            btn.onclick = function () {
+                deleteUser(index);
+            };
+            actionCell.appendChild(btn);
+        });
+    }
+
+    function deleteUser(index) {
+        var users = JSON.parse(localStorage.getItem("users"));
+        users.splice(index, 1);
+        localStorage.setItem("users", JSON.stringify(users));
+        displayUsers();
+    }
+
+    function clearAll() {
+        localStorage.clear();
+        displayUsers();
+    }
+
+    function clearForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("mobile").value = "";
+        document.getElementById("password").value = "";
+    }
+
+    displayUsers();
+</script>
+
+</body>
+</html>
