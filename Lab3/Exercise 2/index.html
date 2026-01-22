@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intelligent Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        input {
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Shopping Cart</h2>
+
+<button onclick="addProduct()">Add Product</button><br><br>
+
+Coupon Code:
+<input type="text" id="coupon">
+<button onclick="applyCoupon()">Apply</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="cartBody"></tbody>
+</table>
+
+<h3>Total: ₹<span id="total">0</span></h3>
+
+<script>
+    let cart = [];
+    let couponDiscount = 0;
+
+    function addProduct() {
+        let product = {
+            name: "Product " + (cart.length + 1),
+            category: "Electronics",
+            price: 100,
+            qty: 1
+        };
+        cart.push(product);
+        displayCart();
+    }
+
+    function updateQty(index, value) {
+        cart[index].qty = Number(value);
+        displayCart();
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        displayCart();
+    }
+
+    function applyCoupon() {
+        let code = document.getElementById("coupon").value.toUpperCase();
+
+        if (code === "SAVE10") {
+            couponDiscount = 0.10;
+        } else {
+            alert("Invalid Coupon Code");
+            couponDiscount = 0;
+        }
+        displayCart();
+    }
+
+    function displayCart() {
+        let body = document.getElementById("cartBody");
+        body.innerHTML = "";
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            let subtotal = item.price * item.qty;
+
+            if (item.qty >= 3) {
+                subtotal *= 0.9;   // bulk discount
+            }
+
+            if (item.category === "Electronics") {
+                subtotal *= 0.95;  // category discount
+            }
+
+            total += subtotal;
+
+            body.innerHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.price}</td>
+                    <td>
+                        <input type="number" value="${item.qty}" min="1"
+                               onchange="updateQty(${index}, this.value)">
+                    </td>
+                    <td>${subtotal.toFixed(2)}</td>
+                    <td>
+                        <button onclick="removeItem(${index})">Remove</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        total = total - (total * couponDiscount);
+        document.getElementById("total").innerText = total.toFixed(2);
+    }
+</script>
+
+</body>
+</html>

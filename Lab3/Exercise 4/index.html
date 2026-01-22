@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Activity Monitor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f4f8;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .monitor-area {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 10px 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Real-Time User Activity Monitor</h2>
+
+<div class="container">
+
+    <div class="monitor-area" id="monitor">
+        Click / Type / Focus here to generate activity
+    </div>
+
+    <div class="warning" id="warning"></div>
+
+    <button onclick="resetLog()">Reset Log</button>
+    <button onclick="exportLog()">Export Log</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event Type</th>
+                <th>Target</th>
+                <th>Phase</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="logTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+    let activityLog = [];
+    let clickCount = 0;
+    const CLICK_THRESHOLD = 5;
+
+    function logActivity(type, target, phase) {
+        let time = new Date().toLocaleTimeString();
+
+        activityLog.push({
+            event: type,
+            target: target,
+            phase: phase,
+            time: time
+        });
+
+        let table = document.getElementById("logTable");
+        let row = table.insertRow();
+        row.insertCell(0).innerText = type;
+        row.insertCell(1).innerText = target;
+        row.insertCell(2).innerText = phase;
+        row.insertCell(3).innerText = time;
+    }
+
+    function checkSuspiciousActivity() {
+        if (clickCount >= CLICK_THRESHOLD) {
+            document.getElementById("warning").innerText =
+                "⚠ Too many clicks detected!";
+        }
+    }
+
+    function resetLog() {
+        activityLog = [];
+        clickCount = 0;
+        document.getElementById("logTable").innerHTML = "";
+        document.getElementById("warning").innerText = "";
+    }
+
+    function exportLog() {
+        let text = "User Activity Log\n\n";
+        activityLog.forEach(log => {
+            text += `${log.event} | ${log.target} | ${log.phase} | ${log.time}\n`;
+        });
+        alert(text);
+    }
+
+    let monitor = document.getElementById("monitor");
+
+    monitor.addEventListener("click", function(e) {
+        clickCount++;
+        logActivity("Click", e.target.tagName, "Bubbling");
+        checkSuspiciousActivity();
+    });
+
+    monitor.addEventListener("click", function(e) {
+        logActivity("Click", e.target.tagName, "Capturing");
+    }, true);
+
+    monitor.addEventListener("keydown", function(e) {
+        logActivity("Key Press: " + e.key, e.target.tagName, "Bubbling");
+    });
+
+    monitor.addEventListener("focus", function(e) {
+        logActivity("Focus", e.target.tagName, "Bubbling");
+    }, true);
+
+    monitor.setAttribute("tabindex", "0");
+</script>
+
+</body>
+</html>

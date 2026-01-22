@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Adaptive Registration</title>
+<style>
+input, select { margin: 5px; padding: 6px; }
+.error { border: 2px solid red; }
+</style>
+</head>
+<body>
+
+<h2>Registration Form</h2>
+
+<form onsubmit="return validateForm()">
+    Name: <input type="text" id="name"><br>
+    Email: <input type="email" id="email"><br>
+    Password: <input type="password" id="password"><br>
+    Confirm Password: <input type="password" id="confirm"><br>
+    Age: <input type="number" id="age"><br>
+
+    Role:
+    <select id="role" onchange="roleChange()">
+        <option value="">Select</option>
+        <option>Student</option>
+        <option>Teacher</option>
+        <option>Admin</option>
+    </select><br>
+
+    Skills: <input type="text" id="skills"><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<script>
+function roleChange() {
+    var role = document.getElementById("role").value;
+    var pwd = document.getElementById("password");
+    if (role === "Admin") {
+        pwd.placeholder = "Min 8 chars, strong";
+    } else {
+        pwd.placeholder = "Min 6 chars";
+    }
+}
+
+function validateForm() {
+    var email = document.getElementById("email").value;
+    var pwd = document.getElementById("password").value;
+    var cpwd = document.getElementById("confirm").value;
+    var role = document.getElementById("role").value;
+
+    if (!email.endsWith("@gmail.com")) {
+        alert("Email domain must be gmail.com");
+        return false;
+    }
+
+    if (role === "Admin" && pwd.length < 8) {
+        alert("Admin password must be strong");
+        return false;
+    }
+
+    if (pwd !== cpwd) {
+        alert("Passwords do not match");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+</body>
+</html>

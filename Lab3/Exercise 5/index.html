@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Stage Form</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #007bff;
+            transition: width 0.3s;
+        }
+
+        .stage {
+            display: none;
+        }
+
+        .stage.active {
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-top: 15px;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Multi-Stage Registration Form</h2>
+
+<div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<form>
+
+    <!-- Stage 1 -->
+    <div class="stage active" id="stage1">
+        <h3>Stage 1: Personal Info</h3>
+        <input type="text" id="name" placeholder="Full Name">
+        <div class="error" id="nameError"></div>
+        <button type="button" onclick="nextStage(1)">Next</button>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="stage" id="stage2">
+        <h3>Stage 2: Contact Info</h3>
+        <input type="email" id="email" placeholder="Email">
+        <div class="error" id="emailError"></div>
+        <button type="button" onclick="prevStage(2)">Back</button>
+        <button type="button" onclick="nextStage(2)">Next</button>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="stage" id="stage3">
+        <h3>Stage 3: Security</h3>
+        <input type="password" id="password" placeholder="Password">
+        <div class="error" id="passwordError"></div>
+        <button type="button" onclick="prevStage(3)">Back</button>
+        <button type="button" onclick="nextStage(3)">Next</button>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="stage" id="stage4">
+        <h3>Stage 4: Confirmation</h3>
+        <p>Review your details and submit.</p>
+        <button type="button" onclick="prevStage(4)">Back</button>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </div>
+
+</form>
+
+</div>
+
+<script>
+    let currentStage = 1;
+    let userData = {};
+
+    function showStage(stage) {
+        document.querySelectorAll(".stage").forEach(s => s.classList.remove("active"));
+        document.getElementById("stage" + stage).classList.add("active");
+        document.getElementById("progressBar").style.width = (stage - 1) * 33 + "%";
+    }
+
+    function nextStage(stage) {
+        if (!validateStage(stage)) return;
+        currentStage++;
+        showStage(currentStage);
+    }
+
+    function prevStage(stage) {
+        currentStage--;
+        showStage(currentStage);
+    }
+
+    function validateStage(stage) {
+        if (stage === 1) {
+            let name = document.getElementById("name").value;
+            if (name.length < 3) {
+                document.getElementById("nameError").innerText = "Name must be at least 3 characters";
+                return false;
+            }
+            document.getElementById("nameError").innerText = "";
+            userData.name = name;
+        }
+
+        if (stage === 2) {
+            let email = document.getElementById("email").value;
+            if (!email.includes("@")) {
+                document.getElementById("emailError").innerText = "Enter valid email";
+                return false;
+            }
+            document.getElementById("emailError").innerText = "";
+            userData.email = email;
+        }
+
+        if (stage === 3) {
+            let password = document.getElementById("password").value;
+            if (password.length < 6) {
+                document.getElementById("passwordError").innerText = "Password must be 6 characters";
+                return false;
+            }
+            document.getElementById("passwordError").innerText = "";
+            userData.password = password;
+        }
+
+        return true;
+    }
+
+    function submitForm() {
+        alert("Form submitted successfully!\n\n" +
+              "Name: " + userData.name + "\n" +
+              "Email: " + userData.email);
+    }
+</script>
+
+</body>
+</html>
