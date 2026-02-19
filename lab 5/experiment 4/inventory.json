@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": "P101",
+      "name": "Laptop",
+      "category": "Electronics",
+      "price": 50000,
+      "stock": 10
+    },
+    {
+      "id": "P102",
+      "name": "Shoes",
+      "category": "Fashion",
+      "price": 2500,
+      "stock": 3
+    }
+  ]
+}
